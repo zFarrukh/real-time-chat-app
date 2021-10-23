@@ -16,6 +16,29 @@ const sidebarTemplate = document.getElementById("sidebar-template").innerHTML;
 // Options
 const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
 
+const autoscroll = () => {
+    // New message element
+    const $newMessage = divMessages.lastElementChild;
+    // Height of new message
+    const newMessageStyles = getComputedStyle($newMessage);
+    const newMessageMargin = parseInt(newMessageStyles.marginBottom);
+    const newMessageHeight = $newMessage.offsetHeight + newMessageMargin;
+    
+    // Visibleheight
+    const visibleHeight = divMessages.offsetHeight;
+
+    // Height of messages container
+    const containerHeight = divMessages.scrollHeight;
+
+    // How far have been scrolled
+    const scrollOffset = divMessages.scrollTop + visibleHeight;
+
+    if(containerHeight - newMessageHeight <= scrollOffset) {
+        divMessages.scrollTop = divMessages.scrollHeight;
+    }
+    
+}
+
 form.addEventListener("submit", (e) => {
     e.preventDefault(); 
     button.setAttribute('disabled', 'disabled');
@@ -38,6 +61,7 @@ socket.on('message', (message) => {
         createdAt: moment(message.createdAt).format('h:mm a')
     })
     divMessages.insertAdjacentHTML('beforeend', html);
+    autoscroll();
 })  
 
 socket.on('locationMessage', (location) => {
@@ -48,6 +72,7 @@ socket.on('locationMessage', (location) => {
         createdAt: moment(location.createdAt).format('h:mm a')
     });
     divMessages.insertAdjacentHTML('beforeend', html);
+    autoscroll();
 })
 
 socket.on('roomData', ({ room, users }) => {
