@@ -9,6 +9,7 @@ const divMessages = document.getElementById("messages");
 
 // Templates
 const messageTemplate = document.getElementById("message-template").innerHTML;
+const locationTemplate = document.getElementById("location-template").innerHTML;
 
 form.addEventListener("submit", (e) => {
     e.preventDefault(); 
@@ -26,10 +27,21 @@ form.addEventListener("submit", (e) => {
 
 socket.on('message', (message) => {
     console.log(message);
-    const html = Mustache.render(messageTemplate, {message})
+    const html = Mustache.render(messageTemplate, {
+        message: message.text,
+        createdAt: moment(message.createdAt).format('h:mm a')
+    })
     divMessages.insertAdjacentHTML('beforeend', html);
 })  
 
+socket.on('locationMessage', (location) => {
+    console.log(location);
+    const html = Mustache.render(locationTemplate, {
+        url: location.url,
+        createdAt: moment(location.createdAt).format('h:mm a')
+    });
+    divMessages.insertAdjacentHTML('beforeend', html);
+})
 
 sendLocationButton.addEventListener('click', () => {
     if(!navigator.geolocation) return alert('Geolocation is not supported by your browser');
