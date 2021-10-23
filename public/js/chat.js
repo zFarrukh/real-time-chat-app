@@ -11,6 +11,9 @@ const divMessages = document.getElementById("messages");
 const messageTemplate = document.getElementById("message-template").innerHTML;
 const locationTemplate = document.getElementById("location-template").innerHTML;
 
+// Options
+const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
+
 form.addEventListener("submit", (e) => {
     e.preventDefault(); 
     button.setAttribute('disabled', 'disabled');
@@ -53,4 +56,6 @@ sendLocationButton.addEventListener('click', () => {
             console.log("Location shared!");
         });
     })
-})
+});
+
+socket.emit('join', { username, room });
