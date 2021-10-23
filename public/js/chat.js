@@ -1,4 +1,6 @@
 const socket = io();
+
+
 const form = document.getElementById('form');
 const input = document.getElementById("message");
 const sendLocationButton = document.getElementById("send-location");
@@ -6,7 +8,11 @@ const sendLocationButton = document.getElementById("send-location");
 form.addEventListener("submit", (e) => {
     e.preventDefault(); 
     const message = input.value;
-    socket.emit("sendMessage", message);
+    socket.emit("sendMessage", message, (error) => {
+        if(error) return console.log(error);
+
+        console.log("Message delivered");
+    });
 })
 
 socket.on('message', (message) => {
@@ -19,6 +25,8 @@ sendLocationButton.addEventListener('click', () => {
 
     navigator.geolocation.getCurrentPosition((position) => {
         const {longitude, latitude } = position.coords;
-        socket.emit("sendLocation", {longitude, latitude});
+        socket.emit("sendLocation", {longitude, latitude}, () => {
+            console.log("Location shared!");
+        });
     })
 })
