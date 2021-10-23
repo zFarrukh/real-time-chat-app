@@ -6,10 +6,12 @@ const input = document.getElementById("message");
 const button = document.getElementById("button");
 const sendLocationButton = document.getElementById("send-location");
 const divMessages = document.getElementById("messages");
+const sidebar = document.getElementById("sidebar");
 
 // Templates
 const messageTemplate = document.getElementById("message-template").innerHTML;
 const locationTemplate = document.getElementById("location-template").innerHTML;
+const sidebarTemplate = document.getElementById("sidebar-template").innerHTML;
 
 // Options
 const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
@@ -46,6 +48,14 @@ socket.on('locationMessage', (location) => {
         createdAt: moment(location.createdAt).format('h:mm a')
     });
     divMessages.insertAdjacentHTML('beforeend', html);
+})
+
+socket.on('roomData', ({ room, users }) => {
+    const html = Mustache.render(sidebarTemplate, {
+        room,
+        users
+    });
+    sidebar.innerHTML = html;
 })
 
 sendLocationButton.addEventListener('click', () => {
